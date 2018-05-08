@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Numerics;
 
-namespace CourseworkAlgo1
+namespace CourseworkAlgo1.I
 {
-    public class NewProblemCalculator
+    public class ProblemCalculator
     {
         private readonly ProblemData _problemData;
 
-        public NewProblemCalculator(ProblemData problemData)
+        public ProblemCalculator(ProblemData problemData)
         {
             _problemData = problemData;
         }
@@ -22,50 +22,35 @@ namespace CourseworkAlgo1
             return (nextI, nextLambda);
         }
 
-        public Complex[][] GetF(Complex[][] i, (double begin, double end) ksi1,
-            (double begin, double end) ksi2, (int ksi1, int ksi2) partitionsAmount)
+        public Complex[][] GetF(Complex[][] i, KsiData ksi1, KsiData ksi2)
         {
             var fFunc = GetFFunction(i);
 
-            var ksi1Length = ksi1.end - ksi1.begin;
-            var ksi1Step = ksi1Length / partitionsAmount.ksi1;
-
-            var ksi2Length = ksi2.end - ksi2.begin;
-            var ksi2Step = ksi2Length / partitionsAmount.ksi2;
-
-            var f = new Complex[partitionsAmount.ksi1 + 1][];
-            for (var j = 0; j < partitionsAmount.ksi1 + 1; j++)
+            var f = new Complex[ksi1.PartitionsAmount][];
+            for (var j = 0; j < ksi1.PartitionsAmount; j++)
             {
-                f[j] = new Complex[partitionsAmount.ksi2 + 1];
-                for (var k = 0; k < partitionsAmount.ksi2 + 1; k++)
+                f[j] = new Complex[ksi2.PartitionsAmount];
+                for (var k = 0; k < ksi2.PartitionsAmount; k++)
                 {
-                    f[j][k] = fFunc(ksi1.begin + j * ksi1Step,
-                        ksi2.begin + k * ksi2Step);
+                    var value = fFunc(ksi1.GetKsiForPartition(j), ksi2.GetKsiForPartition(k));
+                    f[j][k] = value.Magnitude;
                 }
             }
 
             return f;
         }
 
-        public Complex[][] GetFPower(Complex[][] i, (double begin, double end) ksi1,
-            (double begin, double end) ksi2, (int ksi1, int ksi2) partitionsAmount)
+        public Complex[][] GetFPower(Complex[][] i, KsiData ksi1, KsiData ksi2)
         {
             var fFunc = GetFFunction(i);
 
-            var ksi1Length = ksi1.end - ksi1.begin;
-            var ksi1Step = ksi1Length / partitionsAmount.ksi1;
-
-            var ksi2Length = ksi2.end - ksi2.begin;
-            var ksi2Step = ksi2Length / partitionsAmount.ksi2;
-
-            var f = new Complex[partitionsAmount.ksi1 + 1][];
-            for (var j = 0; j < partitionsAmount.ksi1 + 1; j++)
+            var f = new Complex[ksi1.PartitionsAmount][];
+            for (var j = 0; j < ksi1.PartitionsAmount; j++)
             {
-                f[j] = new Complex[partitionsAmount.ksi2 + 1];
-                for (var k = 0; k < partitionsAmount.ksi2 + 1; k++)
+                f[j] = new Complex[ksi2.PartitionsAmount];
+                for (var k = 0; k < ksi2.PartitionsAmount; k++)
                 {
-                    var value = fFunc(ksi1.begin + j * ksi1Step,
-                        ksi2.begin + k * ksi2Step);
+                    var value = fFunc(ksi1.GetKsiForPartition(j), ksi2.GetKsiForPartition(k));
                     f[j][k] = Math.Pow(value.Magnitude, 2);
                 }
             }
@@ -139,6 +124,7 @@ namespace CourseworkAlgo1
         // nextLambda = prevLambda + gamma * grad(prevI, prevLambda)
         public Complex CalculateLambda(Complex[][] prevI, Complex[][] nextI, Complex prevLambda)
         {
+            // return prevLambda;
             return _problemData.UseFunctionToFindLambda
                     ? GetNextLambdaFromFunc(nextI, prevLambda)
                   :  GetNextLambdaByNewtonLikeMethod(prevI, prevLambda);
@@ -195,7 +181,11 @@ namespace CourseworkAlgo1
         public Complex GetGFuncValue(Complex[][] i)
         {
             return IntegralCalculator.ComputeIntegral(
-                (ksi1, ksi2) => _problemData.P(ksi1, ksi2) - Math.Pow(GetFFunction(i)(ksi1, ksi2).Magnitude, 2),
+                (ksi1, ksi2) =>
+                {
+                    var res = _problemData.P(ksi1, ksi2) - Math.Pow(GetFFunction(i)(ksi1, ksi2).Magnitude, 2);
+                    return res; //.Magnitude;
+                },
                 (-1, 1),
                 (-1, 1));
         }

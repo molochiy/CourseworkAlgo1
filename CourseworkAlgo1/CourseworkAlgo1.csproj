@@ -44,10 +44,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KsiData.cs" />
+    <Compile Include="F\Runner.cs" />
     <Compile Include="IntegralCalculator.cs" />
-    <Compile Include="NewProblemCalculator.cs" />
-    <Compile Include="ProblemCalculator.cs" />
-    <Compile Include="ProblemData.cs" />
+    <Compile Include="F\ProblemCalculator.cs" />
+    <Compile Include="I\Runner.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="I\ProblemCalculator.cs" />
+    <Compile Include="F\ProblemData.cs" />
+    <Compile Include="I\ProblemData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
