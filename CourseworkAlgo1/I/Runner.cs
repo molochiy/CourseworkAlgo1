@@ -127,6 +127,7 @@ namespace CourseworkAlgo1.I
                 problemDataVariant.problemData.Ksi2.End = 2;
                 var f = problemCalculator.GetF(nextI, problemDataVariant.problemData.Ksi1,
                     problemDataVariant.problemData.Ksi2);
+                ProblemCalculator.NormF(f);
                 Logger.WriteResultsI(nextI, f, problemDataVariant.problemData, problemDataVariant.variant, runTime);
 
                 Console.WriteLine($"I {problemDataVariant.variant} finished.");

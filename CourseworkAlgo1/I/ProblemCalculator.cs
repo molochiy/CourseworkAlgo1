@@ -158,7 +158,20 @@ namespace CourseworkAlgo1.I
             }
         }
 
-        // F(ksi1, ksi2) = Sum_nSum_m[Inm*e^i*(c1*n*ksi1+c2*m*ksi2)]
+        public static void NormF(Complex[][] f)
+        {
+            var max = f.Max(ii => ii.Max(v => v.Magnitude));
+
+            foreach (var arr in f)
+            {
+                for (var k = 0; k < arr.Length; k++)
+                {
+                    arr[k] = arr[k] / max;
+                }
+            }
+        }
+
+        // F(ksi1, ksi2) = Sum_nSum_m[Inm*e^f*(c1*n*ksi1+c2*m*ksi2)]
         private Func<double, double, Complex> GetFFunction(Complex[][] i)
         {
             return (ksi1, ksi2) =>
