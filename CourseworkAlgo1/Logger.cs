@@ -8,7 +8,7 @@ namespace CourseworkAlgo1
 {
     public static class Logger
     {
-        public static void WriteFIterationToFile(F.ProblemData problemData, Complex[][] values, Complex lambda, int iteration, string fileName)
+        public static void WriteFIterationToFile(F.ProblemData problemData, F.ProblemCalculator problemCalculator, Complex[][] values, Complex lambda, int iteration, string fileName)
         {
             var path = Directory.GetParent(Directory.GetParent(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)).FullName).FullName;
             var file = new FileInfo($"{path}\\results\\F\\{problemData.C1}_{problemData.C2}\\{fileName}");
@@ -17,6 +17,7 @@ namespace CourseworkAlgo1
             using (var writer = new StreamWriter(file.FullName, true))
             {
                 writer.WriteLine($"Iteration #{iteration}");
+                writer.WriteLine($"Sigma without I {problemCalculator.GetSigmaWitoutIFuncValue(values)}");
                 writer.WriteLine($"Lambda {lambda}");
                 for (var i = 0; i < values.Length; i++)
                 {

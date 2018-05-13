@@ -9,7 +9,7 @@ namespace CourseworkAlgo1.F
         {
             var problemDataVariants = new[]
             {
-                (new ProblemData
+                /*(new ProblemData
                 {
                     N = 2,
                     M = 2,
@@ -80,18 +80,20 @@ namespace CourseworkAlgo1.F
                     AbsF = (ksi1, ksi2) =>
                         Math.Pow(Math.Cos(Math.PI * ksi1 / 2), 2) * Math.Pow(Math.Cos(Math.PI * ksi2 / 2), 2),
                     ArgF = (ksi1, ksi2) => 0
-                }, "V2_1_3"),
+                }, "V2_1_3"),*/
                 (new ProblemData
                 {
-                    N = 2,
-                    M = 2,
+                    N = 5,
+                    M = 5,
                     C1 = 1,
                     C2 = 0.85,
                     Alpha = 0.1,
                     P = (ksi1, ksi2) =>
                         Math.Pow(Math.Cos(Math.PI * ksi1 / 2), 2) * Math.Pow(Math.Abs(Math.Sin(Math.PI * ksi2)), 2),
                     AbsF = (ksi1, ksi2) => 1,
-                    ArgF = (ksi1, ksi2) => 0
+                    ArgF = (ksi1, ksi2) => 0,
+                    //Ksi1 = new KsiData {Step = 0.01},
+                    //Ksi2 = new KsiData {Step = 0.01}
                 }, "V3_1_1")
             };
 
@@ -115,17 +117,17 @@ namespace CourseworkAlgo1.F
                     $"{problemDataVariant.variant}\\Iterations_{runTime:yyyy-MM-dd_hh-mm-ss-fff}.txt";
 
                 var prevF = problemDataVariant.problemData.GetInitialF();
-                Complex prevLambda = 1;
-                Logger.WriteFIterationToFile(problemDataVariant.problemData, prevF, prevLambda, iteration,
+                Complex prevLambda = 0;
+                Logger.WriteFIterationToFile(problemDataVariant.problemData, problemCalculator, prevF, prevLambda, iteration,
                     iterationsFileName);
 
                 var nextF = problemCalculator.CalculateNextF(prevF, prevLambda);
                 problemCalculator.NormF(nextF);
                 var nextLambda = problemCalculator.CalculateNextLambda(nextF, prevLambda);
-                Logger.WriteFIterationToFile(problemDataVariant.problemData, nextF, nextLambda, ++iteration,
+                Logger.WriteFIterationToFile(problemDataVariant.problemData, problemCalculator, nextF, nextLambda, ++iteration,
                     iterationsFileName);
 
-                while (!IsSatisfyPrec(prevF, nextF, problemDataVariant.problemData.Prec) && iteration < 0.5e3)
+                while (!IsSatisfyPrec(prevF, nextF, problemDataVariant.problemData.Prec) && iteration < 5e3)
                 {
                     Console.WriteLine($"Iteration: {iteration}");
 
@@ -136,7 +138,7 @@ namespace CourseworkAlgo1.F
                     problemCalculator.NormF(nextF);
                     nextLambda = problemCalculator.CalculateNextLambda(nextF, prevLambda);
 
-                    Logger.WriteFIterationToFile(problemDataVariant.problemData, nextF, nextLambda, ++iteration,
+                    Logger.WriteFIterationToFile(problemDataVariant.problemData, problemCalculator, nextF, nextLambda, ++iteration,
                         iterationsFileName);
                 }
 

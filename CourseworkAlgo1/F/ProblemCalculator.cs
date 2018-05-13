@@ -15,8 +15,6 @@ namespace CourseworkAlgo1.F
 
         public Complex[][] CalculateNextF(Complex[][] f, Complex lambda)
         {
-            IntegralCalculator.OuterVarIntervalPartitionsAmount = _problemData.Ksi1.PartitionsAmount;
-            IntegralCalculator.InnerVarIntervalPartitionsAmount = _problemData.Ksi2.PartitionsAmount;
             var nextF = new Complex[_problemData.Ksi1.PartitionsAmount][];
             for (var i = 0; i < _problemData.Ksi1.PartitionsAmount; i++)
             {
@@ -28,8 +26,8 @@ namespace CourseworkAlgo1.F
 
                     Complex Func(double ksi1, double ksi2) =>
                         GetSubIntegralCommonFunc(f, lambda)(ksi1, ksi2) *
-                        GetKFunction(_problemData.Ksi1.Step * i1 + _problemData.Ksi1.Begin,
-                            _problemData.Ksi2.Step * j1 + _problemData.Ksi2.Begin)(ksi1, ksi2);
+                        GetKFunction(_problemData.Ksi1.GetKsiForPartition(i1),
+                            _problemData.Ksi2.GetKsiForPartition(j1))(ksi1, ksi2);
 
                     nextF[i][j] = IntegralCalculator.ComputeIntegralForProblem(Func, _problemData) / _problemData.Alpha;
                 }
@@ -40,7 +38,7 @@ namespace CourseworkAlgo1.F
 
         public void NormF(Complex[][] f)
         {
-            var fNorm = IntegralCalculator.ComputeIntegralForProblem(
+            /*var fNorm = IntegralCalculator.ComputeIntegralForProblem(
                 (ksi1, ksi2) => Math.Pow(f[_problemData.Ksi1.GetParitionForKsi(ksi1)][_problemData.Ksi2.GetParitionForKsi(ksi2)].Magnitude, 2),
                 _problemData);
 
@@ -50,11 +48,22 @@ namespace CourseworkAlgo1.F
                 {
                     fArray[j] /= Complex.Sqrt(fNorm);
                 }
+            }*/
+
+            var max = f.Max(ii => ii.Max(v => v.Magnitude));
+
+            foreach (var arr in f)
+            {
+                for (var k = 0; k < arr.Length; k++)
+                {
+                    arr[k] = arr[k] / max;
+                }
             }
         }
 
         public Complex CalculateNextLambda(Complex[][] f, Complex lambda)
         {
+            return lambda;
             var grad = GetGFuncValue(f);
             var I = CalculateI(f, lambda);
             var functionValue = false ? CalculateFunctionValue(I) : CalculateFunctionValue(f, I);
@@ -140,6 +149,17 @@ namespace CourseworkAlgo1.F
                 {
                     var res = _problemData.P(ksi1, ksi2) - Math.Pow(f[_problemData.Ksi1.GetParitionForKsi(ksi1)][_problemData.Ksi2.GetParitionForKsi(ksi2)].Magnitude, 2);
                     return res; //.Magnitude;
+                },
+                _problemData);
+        }
+
+        public Complex GetSigmaWitoutIFuncValue(Complex[][] f)
+        {
+            return IntegralCalculator.ComputeIntegralForProblem(
+                (ksi1, ksi2) =>
+                {
+                    var res = _problemData.P(ksi1, ksi2) - Math.Pow(f[_problemData.Ksi1.GetParitionForKsi(ksi1)][_problemData.Ksi2.GetParitionForKsi(ksi2)].Magnitude, 2);
+                    return res * res;;
                 },
                 _problemData);
         }
