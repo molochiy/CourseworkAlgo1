@@ -7,7 +7,7 @@ namespace CourseworkAlgo1
         private static void Main()
         {
             F.Runner.Run();
-            I.Runner.Run();
+            // I.Runner.Run();
 
             Console.ReadLine();
         }

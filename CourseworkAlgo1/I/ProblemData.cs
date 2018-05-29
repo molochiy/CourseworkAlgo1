@@ -35,7 +35,7 @@ namespace CourseworkAlgo1.I
             //var oscillatorAmount = (2 * m + 1) * (2 * n + 1);
             for (var i = 0; i < 2 * M + 1; i++)
             {
-                I[i] = Enumerable.Repeat<Complex>(1, 2 * M + 1).ToArray();
+                I[i] = Enumerable.Repeat<Complex>(0.001, 2 * M + 1).ToArray();
             }
 
             ProblemCalculator.NormI(I);

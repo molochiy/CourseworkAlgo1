@@ -63,9 +63,10 @@ namespace CourseworkAlgo1.F
 
         public Complex CalculateNextLambda(Complex[][] f, Complex lambda)
         {
-            return lambda;
+            if (_problemData.IsLambdaConst) return lambda;
             var grad = GetGFuncValue(f);
             var I = CalculateI(f, lambda);
+            NormI(I);
             var functionValue = false ? CalculateFunctionValue(I) : CalculateFunctionValue(f, I);
             var lagrangeFunctionValue = functionValue + lambda * grad;
             // newton like
@@ -220,6 +221,22 @@ namespace CourseworkAlgo1.F
                 return (2 * (_problemData.P(ksi1, ksi2) - Math.Pow(f[indexKsi1][indexKsi2].Magnitude, 2)) + lambda) *
                        f[indexKsi1][indexKsi2];
             };
+        }
+
+        public static void NormI(Complex[][] i)
+        {
+            var sum = i.Sum(ii => ii.Sum(v => Math.Pow(v.Magnitude, 2)));
+            sum = Math.Sqrt(sum);
+
+            // var sum = i.Max(ii => ii.Max(v => v.Magnitude));
+
+            foreach (var arr in i)
+            {
+                for (var k = 0; k < arr.Length; k++)
+                {
+                    arr[k] = arr[k] / sum;
+                }
+            }
         }
     }
 }

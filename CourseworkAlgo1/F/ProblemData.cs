@@ -16,7 +16,7 @@ namespace CourseworkAlgo1.F
         public double C1 { get; set; } = 0.5;
         public double C2 { get; set; } = 0.75;
 
-        public double Prec { get; set; } = 1e-6;
+        public double Prec { get; set; } = 1e-4;
 
         public Func<double, double, Complex> P { get; set; } = (ksi1, ksi2) => 1;
         public Func<double, double, double> AbsF { get; set; } = (ksi1, ksi2) => 1;
@@ -27,6 +27,8 @@ namespace CourseworkAlgo1.F
             get => _alpha ?? C1 * C2 / Math.Pow(2 * Math.PI, 2);
             set => _alpha = value;
         }
+
+        public bool IsLambdaConst { get; set; }
 
         public Complex[][] GetInitialF()
         {

@@ -9,7 +9,7 @@ namespace CourseworkAlgo1.I
         {
             var problemDataVariants = new[]
             {
-                (new ProblemData
+                /*(new ProblemData
                 {
                     N = 2,
                     M = 2,
@@ -65,11 +65,11 @@ namespace CourseworkAlgo1.I
                     C2 = 1.2,
                     Alpha = 0.1,
                     P = (ksi1, ksi2) => 1
-                }, "V2_1_3"),
+                }, "V2_1_3"),*/
                 (new ProblemData
                 {
-                    N = 2,
-                    M = 2,
+                    N = 5,
+                    M = 5,
                     C1 = 1,
                     C2 = 0.85,
                     Alpha = 0.1,
@@ -93,7 +93,7 @@ namespace CourseworkAlgo1.I
 
                 var prevI = problemDataVariant.problemData.GetInitialI();
                 //var prevI = InitDifferentI(problemData.N, problemData.M);
-                Complex prevLambda = 0.001;
+                Complex prevLambda = 0;
 
                 CheckInputValues(prevI, prevLambda, problemCalculator);
                 var runTime = DateTime.Now;

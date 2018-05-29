@@ -73,7 +73,7 @@ namespace CourseworkAlgo1.I
 
             var gValue = GetGFuncValue(i);
 
-            return funcValue + sumI + lambda * gValue;
+            return funcValue + _problemData.Alpha * sumI + lambda * gValue;
         }
 
         public Complex GetFunctionValue(Complex[][] i)
@@ -101,17 +101,11 @@ namespace CourseworkAlgo1.I
             {
                 for (var m = -_problemData.M; m <= _problemData.M; m++)
                 {
-                    for (var l = -_problemData.N; l <= _problemData.N; l++)
-                    {
-                        for (var k = -_problemData.M; k <= _problemData.M; k++)
-                        {
                             nextI[n + _problemData.N][m + _problemData.M] += IntegralCalculator.ComputeIntegral(
-                                    GetIntegralFunction(i, lambda, n, m, l, k),
+                                    GetIntegralFunction(i, lambda, n, m),
                                     (-1, 1),
                                     (-1, 1)
                                 );
-                        }
-                    }
 
                     nextI[n + _problemData.N][m + _problemData.M] /= _problemData.Alpha;
                     // Console.WriteLine($"I[{n + _problemData.N}][{m + _problemData.M}] = {nextI[n + _problemData.N][m + _problemData.M]}");
@@ -124,30 +118,32 @@ namespace CourseworkAlgo1.I
         // nextLambda = prevLambda + gamma * grad(prevI, prevLambda)
         public Complex CalculateLambda(Complex[][] prevI, Complex[][] nextI, Complex prevLambda)
         {
-            // return prevLambda;
+            return prevLambda;
             return _problemData.UseFunctionToFindLambda
                     ? GetNextLambdaFromFunc(nextI, prevLambda)
                   :  GetNextLambdaByNewtonLikeMethod(prevI, prevLambda);
         }
 
-        public Func<double, double, Complex> GetIntegralFunction(Complex[][] i, Complex lambda, int n, int m, int l, int k)
+        public Func<double, double, Complex> GetIntegralFunction(Complex[][] i, Complex lambda, int n, int m)
         {
             var f = GetFFunction(i);
 
             Complex EFunc(double ksi1, double ksi2)
             {
-                var angle = _problemData.C1 * (l - n) * ksi1 + _problemData.C2 * (k - m) * ksi2;
-                return new Complex(Math.Cos(angle), Math.Sin(angle));
+                var angle = _problemData.C1 * n * ksi1 + _problemData.C2 * m * ksi2;
+                return new Complex(Math.Cos(-angle), Math.Sin(-angle));
             }
 
             return (ksi1, ksi2) => (2 * (_problemData.P(ksi1, ksi2) - Math.Pow(f(ksi1, ksi2).Magnitude, 2)) + lambda)
-                                   * EFunc(ksi1, ksi2);
+                                   * EFunc(ksi1, ksi2) * f(ksi1, ksi2);
         }
 
         public static void NormI(Complex[][] i)
         {
             var sum = i.Sum(ii => ii.Sum(v => Math.Pow(v.Magnitude, 2)));
             sum = Math.Sqrt(sum);
+
+            // var sum = i.Max(ii => ii.Max(v => v.Magnitude));
 
             foreach (var arr in i)
             {
